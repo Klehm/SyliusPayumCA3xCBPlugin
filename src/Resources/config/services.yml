@@ -18,3 +18,10 @@ services:
         class: Klehm\SyliusPayumCA3xcbPlugin\Payum\PayboxParams
         arguments: ['@sylius.context.locale']
         public: true
+
+    klehm.ca3xcb.payment.failstatus:
+        public: true
+        class: Klehm\SyliusPayumCA3xcbPlugin\Payment\PaymentStatusFailHandler
+        arguments:
+        - '@sylius.manager.payment'
+        - '@sylius.repository.payment_security_token'

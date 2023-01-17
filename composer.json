@@ -64,8 +64,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Klehm\\SyliusPayum3xcbPlugin\\": "src/",
-            "Tests\\Klehm\\SyliusPayum3xcbPlugin\\": "tests/"
+            "Klehm\\SyliusPayumCA3xcbPlugin\\": "src/",
+            "Tests\\Klehm\\SyliusPayumCA3xcbPlugin\\": "tests/"
         }
     },
     "autoload-dev": {
