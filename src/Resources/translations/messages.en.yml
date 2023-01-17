@@ -1,0 +1,7 @@
+klehm_payum_ca3xcb_plugin:
+    hmac: Hmac
+    identifiant: Identifier
+    gateway_label: CA 3xCB
+    sandbox: Sandbox ?
+    rang: Rank number
+    site: Site number

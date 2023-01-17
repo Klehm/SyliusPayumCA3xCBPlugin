@@ -1,0 +1,20 @@
+services:
+    Klehm\SyliusPayumCA3xcbPlugin\Form\Type\CA3xcbGatewayConfigurationType:
+        tags:
+            - { name: sylius.gateway_configuration_type, type: ca3xcb, label: 'ca3xcb' }
+            - { name: form.type }
+    klehm.ca3xcb.payment.factory:
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        arguments: [ Klehm\SyliusPayumCA3xcbPlugin\Payum\CA3xcbGatewayFactory ]
+        tags:
+            - { name: payum.gateway_factory_builder, factory: ca3xcb }
+    Klehm\SyliusPayumCA3xcbPlugin\Payum\Action\ConvertPaymentAction:
+        public: true
+        arguments:
+            - '@klehm.ca3xcb.payment.paybox_params'
+        tags:
+            - { name: payum.action, factory: ca3xcb, alias: payum.action.convert_payment }
+    klehm.ca3xcb.payment.paybox_params:
+        class: Klehm\SyliusPayumCA3xcbPlugin\Payum\PayboxParams
+        arguments: ['@sylius.context.locale']
+        public: true
