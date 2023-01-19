@@ -12,8 +12,8 @@ use Sylius\Component\Locale\Context\LocaleContextInterface;
 class PayboxParams
 {
     // Default servers urls
-    const SERVER_TEST = "https://recette-tpeweb.e-transactions.fr/php/";
-    const SERVER_PRODUCTION = "https://tpeweb.e-transactions.fr/php/";
+    const SERVER_TEST = "https://preprod-tpeweb.paybox.com/php/";
+    const SERVER_PRODUCTION = "https://tpeweb.paybox.com/php/";
 
     const INTERFACE_VERSION = "IR_WS_2.17";
     const INSTALMENT = "INSTALMENT";
@@ -43,6 +43,7 @@ class PayboxParams
     const PBX_TIME = 'PBX_TIME';
     const PBX_SOURCE = 'PBX_SOURCE';
     const PBX_BILLING = "PBX_BILLING";
+    const PBX_CUSTOMER = "PBX_CUSTOMER";
     const PBX_SHOPPINGCART = "PBX_SHOPPINGCART";
     const PBX_ERRORCODETEST = "PBX_ERRORCODETEST";
 
@@ -93,6 +94,16 @@ class PayboxParams
             $zipCode,
             $city,
             $countryIso3661
+        );
+
+        return $xml;
+    }
+    
+    public function setCustomer($customer)
+    {
+        $xml = sprintf(
+            '<?xml version="1.0" encoding="utf-8"?><Customer><Id>%s</Id></Customer>',
+            $customer->getId()
         );
 
         return $xml;

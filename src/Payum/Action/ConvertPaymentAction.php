@@ -41,16 +41,13 @@ class ConvertPaymentAction implements ActionInterface, GatewayAwareInterface, Ge
         $payment = $request->getSource();
         $order = $payment->getOrder();
         $details = ArrayObject::ensureArrayObject($payment->getDetails());
-
-        //$type = "standard";
-
-        $options = $this->api->getOptions();
-        $details = $this->computeThreetimePayments($payment->getAmount(), $details);
-
+        $details[PayboxParams::PBX_TOTAL] = $payment->getAmount();
         $details[PayboxParams::PBX_DEVISE] = $this->payboxParams->convertCurrencyToCurrencyCode($payment->getCurrencyCode());
         $details[PayboxParams::PBX_CMD] = $order->getNumber();
         $details[PayboxParams::PBX_PORTEUR] = $order->getCustomer()->getEmail();
         $details[PayboxParams::PBX_BILLING] = $this->payboxParams->setBilling($order);
+        $details[PayboxParams::PBX_CUSTOMER] = $this->payboxParams->setCustomer($order->getCustomer());
+
         $details[PayboxParams::PBX_SHOPPINGCART] = $this->payboxParams->setShoppingCart($order->countItems());
         $token = $request->getToken();
         $details[PayboxParams::PBX_EFFECTUE] = $token->getTargetUrl();
@@ -58,8 +55,8 @@ class ConvertPaymentAction implements ActionInterface, GatewayAwareInterface, Ge
         $details[PayboxParams::PBX_REFUSE] = $token->getTargetUrl();
         $details[PayboxParams::PBX_ATTENTE] = $token->getTargetUrl();
         //just CB Cards
-        $details[PayboxParams::PBX_TYPEPAIEMENT] = 'CARTE';
-        $details[PayboxParams::PBX_TYPECARTE] = 'CB';
+        $details[PayboxParams::PBX_TYPEPAIEMENT] = 'LIMONETIK';
+        $details[PayboxParams::PBX_TYPECARTE] = 'SOF3XSF';
 
         // Prevent duplicated payment error
         if (strpos($token->getGatewayName(), 'sandbox') !== false) {
@@ -72,31 +69,6 @@ class ConvertPaymentAction implements ActionInterface, GatewayAwareInterface, Ge
         }
 
         $request->setResult((array) $details);
-    }
-
-    public function computeThreetimePayments($totalAmount, $details)
-    {
-        // Compute each payment amount
-        $iterations = 3;
-        $step = $totalAmount / $iterations;
-        $nthStep = floor($step);
-        $firstStep = round($totalAmount - ($nthStep * ($iterations - 1)));
-
-        $details['PBX_TOTAL'] = sprintf('%03d', $firstStep);
-        $details['PBX_2MONT1'] = sprintf('%03d', $nthStep);
-        $details['PBX_2MONT2'] = sprintf('%03d', $nthStep);
-
-        // Payment dates
-        $now = new \DateTime();
-        $now->modify('1 month');
-        $details['PBX_DATE1'] = $now->format('d/m/Y');
-        $now->modify('1 month');
-        $details['PBX_DATE2'] = $now->format('d/m/Y');
-
-
-        // Force validity date of card
-        $details['PBX_DATEVALMAX'] = $now->format('ym');
-        return $details;
     }
 
     /**
